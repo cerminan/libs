@@ -13,6 +13,7 @@ var Errors = errors.Errors{
   "STRUCT" : "'config' is not a structure.",
   "UNSUPPORT" : "a field of 'config' has unsupported kind.",
   "NOTNUMBER" : "value is not a number.",
+  "NIL" : "'config' is nil.",
 }
 
 func LoadConfig(config interface{}) error {
@@ -32,7 +33,13 @@ func LoadConfig(config interface{}) error {
   }
 
   var config_value reflect.Value
-  config_value = reflect.ValueOf(config).Elem()
+  config_value = reflect.ValueOf(config)
+
+  if config_value.IsZero() {
+    return Errors.Code("NIL")
+  }
+
+  config_value = config_value.Elem()
 
   var i int
   for i=0; i<config_value.NumField(); i++ {
