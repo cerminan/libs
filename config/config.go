@@ -51,7 +51,9 @@ func LoadConfig(config interface{}) error {
     var value string
     var exists bool
     if value, exists = os.LookupEnv(field_type.Name); exists{
-      setValue(field_value, value)
+      if err := setValue(field_value, value); err != nil {
+        return err
+      }
       continue
     }
 
@@ -60,11 +62,15 @@ func LoadConfig(config interface{}) error {
     }
 
     if value, exists = field_type.Tag.Lookup(defaultTag); exists{
-      setValue(field_value, value)
+      if err := setValue(field_value, value); err != nil {
+        return err
+      }
       continue
     }
 
-    setValue(field_value, "")
+    if err := setValue(field_value, ""); err != nil {
+      return err
+    }
   }
   return nil
 }
