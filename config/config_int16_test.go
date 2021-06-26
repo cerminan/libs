@@ -16,13 +16,16 @@ func TestFieldInt16(t *testing.T){
   type config_format struct {
     Empty int16
     Default int16 `default:"1"`
-    Envar int16
+    Int16 int16
     Set int16 
   }
 
-  var temp_envar_Envar string
-  temp_envar_Envar = os.Getenv("Envar")
-  os.Setenv("Envar", fmt.Sprint(non_empty))
+  var envar string
+  envar = "Int16"
+
+  var temp_envar string
+  temp_envar = os.Getenv(envar)
+  os.Setenv(envar, fmt.Sprint(non_empty))
 
   var config *config_format
   config = &config_format{Set: non_empty}
@@ -39,7 +42,7 @@ func TestFieldInt16(t *testing.T){
     t.Errorf(default_err)
   }
 
-  if config.Envar != non_empty {
+  if config.Int16 != non_empty {
     t.Errorf(envar_err)
   }
 
@@ -47,7 +50,7 @@ func TestFieldInt16(t *testing.T){
     t.Errorf(set_err)
   }
 
-  os.Setenv("Envar", temp_envar_Envar)
+  os.Setenv(envar, temp_envar)
 }
 
 func TestInvalidFieldInt16(t *testing.T){
