@@ -13,6 +13,7 @@ var Errors = errors.Errors{
   "STRUCT" : "'config' is not a structure.",
   "UNSUPPORT" : "a field of 'config' has unsupported kind.",
   "NOTNUMBER" : "value is not a number.",
+  "NOTBOOL" : "value is not a valid boolean representation.",
   "NIL" : "'config' is nil.",
 }
 
@@ -98,6 +99,21 @@ func setValue(var_value reflect.Value, value string) error{
     }
 
     var_value.SetInt(value_int64)
+
+  case reflect.Bool:
+    var value_bool bool
+    
+    if value == "" {
+      var_value.SetBool(false)
+      return nil
+    }
+
+    value_bool, err := strconv.ParseBool(value)
+    if err != nil {
+      return Errors.Code("NOTBOOL")
+    }
+
+    var_value.SetBool(value_bool)
 
   default:
     return Errors.Code("UNSUPPORT")
