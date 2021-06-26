@@ -76,6 +76,7 @@ func LoadConfig(config interface{}) error {
 }
 
 func setValue(var_value reflect.Value, value string) error{
+  var err error
   var kind reflect.Kind
   kind = var_value.Type().Kind()
   switch kind {
@@ -85,7 +86,6 @@ func setValue(var_value reflect.Value, value string) error{
 
   case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
     var value_int64 = int64(0)
-    var err error
 
     if value == "" {
       var_value.SetInt(value_int64)
