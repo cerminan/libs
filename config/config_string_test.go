@@ -27,11 +27,13 @@ func TestFieldString(t *testing.T){
   os.Setenv(envar, non_empty)
 
   var config *config_format
-  config = &config_format{
-    Set: non_empty, 
+  config = &config_format{}
+  if err := Init(config); err != nil {
+    t.Fatalf(err.Error())
   }
+  config.Set = non_empty
 
-  if err := LoadConfig(config); err != nil {
+  if err := LoadEnvar(config); err != nil {
     t.Fatalf(err.Error())
   }
 

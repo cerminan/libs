@@ -9,7 +9,7 @@ func TestNil(t *testing.T){
   type config_format struct{}
   var config_ptr *config_format
 
-  if err := LoadConfig(config_ptr); err.Error() != Errors.Code("NIL").Error() {
+  if err := validateConfig(config_ptr); err.Error() != Errors.Code("NIL").Error() {
     t.Fatal("Unable to detect nill config variable")
   }
 }
@@ -17,11 +17,11 @@ func TestNil(t *testing.T){
 func TestPointer(t *testing.T){
   type config_format struct{}
 
-  if err := LoadConfig(&config_format{}); err != nil {
+  if err := validateConfig(&config_format{}); err != nil {
     t.Fatal("Unable to parse pointer config variable")
   }
 
-  if err := LoadConfig(config_format{}); err.Error() != Errors.Code("PTR").Error() {
+  if err := validateConfig(config_format{}); err.Error() != Errors.Code("PTR").Error() {
     t.Fatal("Unable to detect non pointer config variable")
   }
 }
@@ -32,11 +32,11 @@ func TestStruct(t *testing.T){
   var Int int
   Int = 0
 
-  if err := LoadConfig(&config_format{}); err != nil {
+  if err := validateConfig(&config_format{}); err != nil {
     t.Fatal("Unable to parse pointer struct type")
   }
   
-  if err := LoadConfig(&Int); err.Error() != Errors.Code("STRUCT").Error() {
+  if err := validateConfig(&Int); err.Error() != Errors.Code("STRUCT").Error() {
     t.Fatal("Unable to detect non pointer struct type")
   }
 }
@@ -48,14 +48,19 @@ func TestPriority(t *testing.T){
     PrioritySet string `default:"default"`
   }
   var config *config_format
-  config = &config_format{PriorityEnvar: "set", PrioritySet:"set"}
+  config = &config_format{}
+  if err := Init(config); err != nil {
+    t.Fatalf(err.Error())
+  }
+  config.PriorityEnvar = "set"
+  config.PrioritySet = "set"
 
   var temp_envar_PriorityEnvar string
   temp_envar_PriorityEnvar = os.Getenv("PriorityEnvar")
   os.Setenv("PriorityEnvar", "envar")
 
   
-  if err := LoadConfig(config); err != nil {
+  if err := LoadEnvar(config); err != nil {
     t.Fatalf(err.Error())
   }
 

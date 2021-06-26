@@ -17,10 +17,7 @@ var Errors = errors.Errors{
   "NIL" : "'config' is nil.",
 }
 
-func LoadConfig(config interface{}) error {
-  var defaultTag string
-  defaultTag = "default"
-  
+func validateConfig(config interface{}) error {
   var config_type reflect.Type
   config_type = reflect.TypeOf(config)
 
@@ -40,7 +37,59 @@ func LoadConfig(config interface{}) error {
     return Errors.Code("NIL")
   }
 
-  config_value = config_value.Elem()
+  return nil
+}
+
+func Init(config interface{}) error {
+  var err error
+
+  err = validateConfig(config)
+  if err != nil {
+    return err
+  }
+
+  var config_type reflect.Type
+  config_type = reflect.TypeOf(config).Elem()
+
+  var config_value reflect.Value
+  config_value = reflect.ValueOf(config).Elem()
+
+  var defaultTag string
+  defaultTag = "default"
+  
+  var i int
+  for i=0; i<config_value.NumField(); i++ {
+    var field_value reflect.Value
+    field_value = config_value.Field(i)
+    var field_type reflect.StructField
+    field_type = config_type.Field(i) 
+
+    var value string
+    var exists bool
+
+    if value, exists = field_type.Tag.Lookup(defaultTag); exists{
+      if err := setValue(field_value, value); err != nil {
+        return err
+      }
+      continue
+    }
+  }
+  return nil
+}
+
+func LoadEnvar(config interface{}) error {
+  var err error
+
+  err = validateConfig(config)
+  if err != nil {
+    return err
+  }
+
+  var config_type reflect.Type
+  config_type = reflect.TypeOf(config).Elem()
+
+  var config_value reflect.Value
+  config_value = reflect.ValueOf(config).Elem()
 
   var i int
   for i=0; i<config_value.NumField(); i++ {
@@ -56,21 +105,6 @@ func LoadConfig(config interface{}) error {
         return err
       }
       continue
-    }
-
-    if !field_value.IsZero() {
-      continue
-    }
-
-    if value, exists = field_type.Tag.Lookup(defaultTag); exists{
-      if err := setValue(field_value, value); err != nil {
-        return err
-      }
-      continue
-    }
-
-    if err := setValue(field_value, ""); err != nil {
-      return err
     }
   }
   return nil

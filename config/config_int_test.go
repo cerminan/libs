@@ -28,9 +28,13 @@ func TestFieldInt(t *testing.T){
   os.Setenv(envar, fmt.Sprint(non_empty))
 
   var config *config_format
-  config = &config_format{Set: non_empty}
+  config = &config_format{}
+  if err := Init(config); err != nil {
+    t.Fatal(err.Error())
+  }
+  config.Set = non_empty
 
-  if err := LoadConfig(config); err != nil {
+  if err := LoadEnvar(config); err != nil {
     t.Fatalf(err.Error())
   }
 
@@ -56,21 +60,19 @@ func TestFieldInt(t *testing.T){
 func TestInvalidFieldInt(t *testing.T){
   var err error
 
-  type config_default struct{
-    Default int `default:"a"`
+  type config_format struct{
+    IntInvalid int `default:"a"`
   }
-
-  err = LoadConfig(&config_default{})
+  var config *config_format
+  config = &config_format{}
+  
+  err = Init(config)
   
   if err == nil {
     t.Fatalf(invalid_default_err)
   }
   if err.Error() != Errors.Code("NOTNUMBER").Error() {
     t.Fatalf(invalid_default_err)
-  }
-
-  type config_envar struct {
-    IntInvalid int
   }
 
   var envar string
@@ -81,7 +83,7 @@ func TestInvalidFieldInt(t *testing.T){
 
   os.Setenv(envar, "a")
 
-  err = LoadConfig(&config_envar{})
+  err = LoadEnvar(config) 
 
   if err == nil {
     t.Fatalf(invalid_envar_err)
