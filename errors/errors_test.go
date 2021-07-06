@@ -3,12 +3,18 @@ package errors
 import (
 	"fmt"
 	"testing"
+  "os"
 )
 
-var e = Errors{
-  "err" : "msg",
-}
+var e Errors
 var err error
+
+func TestMain(m *testing.M){
+  e = New(map[ErrorCode]string{
+    "err": "msg",
+  })
+  os.Exit(m.Run())
+}
 
 func TestKnownCode(t *testing.T){
   err = e.Code("err")
@@ -23,5 +29,13 @@ func TestUknownCode(t *testing.T){
   err = e.Code(code)
   if err.Error() != fmt.Sprintf(uknownFormat, code){
     t.Error("Unable to react on uknown error code")
+  }
+}
+
+func TestCompare(t *testing.T){
+  var code ErrorCode
+  code = "err"
+  if e.Code(code) != e.Code(code) {
+    t.Error("Unable to detect similar error as identical")
   }
 }
