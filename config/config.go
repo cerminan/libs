@@ -8,14 +8,14 @@ import (
 	"github.com/kuli-app/libs/errors"
 )
 
-var Errors = errors.Errors{
+var Errors = errors.New(map[errors.ErrorCode]string{
   "PTR" : "'config' is not a pointer.",
   "STRUCT" : "'config' is not a structure.",
   "UNSUPPORT" : "a field of 'config' has unsupported kind.",
   "NOTNUMBER" : "value is not a number.",
   "NOTBOOL" : "value is not a valid boolean representation.",
   "NIL" : "'config' is nil.",
-}
+})
 
 func validateConfig(config interface{}) error {
   var config_type reflect.Type
