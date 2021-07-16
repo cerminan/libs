@@ -3,7 +3,6 @@ package config
 import (
 	"os"
 	"reflect"
-	"strconv"
 
 	"github.com/kuli-app/libs/errors"
 )
@@ -16,6 +15,21 @@ var Errors = errors.New(errors.Dictionary{
   "NOTBOOL" : "value is not a valid boolean representation.",
   "NIL" : "'config' is nil.",
 })
+
+type configKind struct{
+  Kind reflect.Kind
+  SetValue func(reflectValue reflect.Value, value string) error
+}
+
+var configkinds = []configKind{
+  configString,
+  configInt,
+  configInt8,
+  configInt16,
+  configInt32,
+  configInt64,
+  configBool,
+}
 
 func validateConfig(config interface{}) error {
   var config_type reflect.Type
@@ -114,45 +128,17 @@ func setValue(var_value reflect.Value, value string) error{
   var err error
   var kind reflect.Kind
   kind = var_value.Type().Kind()
-  switch kind {
 
-  case reflect.String:
-    var_value.SetString(value)
+  for _, configkind := range configkinds {
+    if kind == configkind.Kind {
+      err = configkind.SetValue(var_value, value)
+      if err != nil {
+        return err
+      }
 
-  case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-    var value_int64 = int64(0)
-
-    if value == "" {
-      var_value.SetInt(value_int64)
       return nil
     }
-
-    value_int64, err = strconv.ParseInt(value, 10, (int(kind) - 2) * 8)
-    if err != nil {
-      return Errors.Code("NOTNUMBER")
-    }
-
-    var_value.SetInt(value_int64)
-
-  case reflect.Bool:
-    var value_bool bool
-    
-    if value == "" {
-      var_value.SetBool(false)
-      return nil
-    }
-
-    value_bool, err := strconv.ParseBool(value)
-    if err != nil {
-      return Errors.Code("NOTBOOL")
-    }
-
-    var_value.SetBool(value_bool)
-
-  default:
-    return Errors.Code("UNSUPPORT")
-
   }
 
-  return nil
+  return Errors.Code("UNSUPPORT")
 }
