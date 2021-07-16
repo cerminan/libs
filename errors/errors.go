@@ -9,10 +9,12 @@ type ErrorCode string
 type Errors struct {
   errs map[ErrorCode]error
 }
+type Dictionary map[ErrorCode]string
+type errorDictionary map[ErrorCode]error
 
-func New(list map[ErrorCode]string) Errors {
-  var errs map[ErrorCode]error
-  errs = make(map[ErrorCode]error)
+func New(list Dictionary) Errors {
+  var errs errorDictionary
+  errs = make(errorDictionary)
 
   for code, msg := range list {
     errs[code] = errors.New(msg)
