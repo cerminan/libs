@@ -12,6 +12,8 @@ type Errors struct {
 type Dictionary map[ErrorCode]string
 type errorDictionary map[ErrorCode]error
 
+const uknownFormat = "Error code %s is uknown"
+
 func New(list Dictionary) Errors {
   var errs errorDictionary
   errs = make(errorDictionary)
@@ -24,8 +26,6 @@ func New(list Dictionary) Errors {
     errs: errs,
   }
 }
-
-var uknownFormat = "Error code %s is uknown"
 
 func (e Errors) Code(code ErrorCode) error{
   var err error
