@@ -7,14 +7,7 @@ import (
 	"github.com/kuli-app/libs/errors"
 )
 
-var Errors = errors.New(errors.Dictionary{
-  "PTR" : "'config' is not a pointer.",
-  "STRUCT" : "'config' is not a structure.",
-  "UNSUPPORT" : "a field of 'config' has unsupported kind.",
-  "NOTNUMBER" : "value is not a number.",
-  "NOTBOOL" : "value is not a valid boolean representation.",
-  "NIL" : "'config' is nil.",
-})
+var Errors *errors.Errors
 
 type configKind struct{
   Kind reflect.Kind
@@ -32,6 +25,14 @@ var configkinds = []configKind{
 }
 
 func validateConfig(config interface{}) error {
+  var err error
+
+  const errDict string = "errors.json"
+  Errors, err = errors.New(errDict)
+  if err != nil {
+    return err
+  }
+
   var config_type reflect.Type
   config_type = reflect.TypeOf(config)
 

@@ -6,13 +6,14 @@ import (
   "os"
 )
 
-var e Errors
+var e *Errors
 var err error
 
 func TestMain(m *testing.M){
-  e = New(map[ErrorCode]string{
-    "err": "msg",
-  })
+  const path = "errors_test.json"
+
+  e, _ = New(path)
+
   os.Exit(m.Run())
 }
 
@@ -24,7 +25,7 @@ func TestKnownCode(t *testing.T){
 }
 
 func TestUknownCode(t *testing.T){
-  var code ErrorCode
+  var code string
   code = "eer"
   err = e.Code(code)
   if err.Error() != fmt.Sprintf(uknownFormat, code){
@@ -33,7 +34,7 @@ func TestUknownCode(t *testing.T){
 }
 
 func TestCompare(t *testing.T){
-  var code ErrorCode
+  var code string
   code = "err"
   if e.Code(code) != e.Code(code) {
     t.Error("Unable to detect similar error as identical")
