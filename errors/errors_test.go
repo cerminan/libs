@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"fmt"
 	"testing"
   "os"
 )
@@ -28,15 +27,7 @@ func TestUknownCode(t *testing.T){
   var code string
   code = "eer"
   err = e.Code(code)
-  if err.Error() != fmt.Sprintf(uknownFormat, code){
+  if err != errUknown{
     t.Error("Unable to react on uknown error code")
-  }
-}
-
-func TestCompare(t *testing.T){
-  var code string
-  code = "err"
-  if e.Code(code) != e.Code(code) {
-    t.Error("Unable to detect similar error as identical")
   }
 }

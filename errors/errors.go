@@ -1,18 +1,21 @@
 package errors
 
 import (
-  "encoding/json"
-  "errors"
-  "fmt"
-  "io/ioutil"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
 )
 
 type errorDictionary map[string]error
 type Errors struct {
   errDict errorDictionary
+  debug func(v ...interface{})
 }
 
 const uknownFormat = "Error code %s is uknown"
+var errUknown = errors.New("Something wrong!")
 
 func New(path string) (*Errors, error) {
   var err error
@@ -34,7 +37,12 @@ func New(path string) (*Errors, error) {
 
   return &Errors{
     errDict: errDict,
+    debug: log.Println,
   }, nil
+}
+
+func (e *Errors) SetDebug(fn func(v ...interface{})) {
+  e.debug = fn
 }
 
 func (e Errors) Code(code string) error{
@@ -44,5 +52,11 @@ func (e Errors) Code(code string) error{
     return err
   }
 
-  return errors.New(fmt.Sprintf(uknownFormat, code))
+  e.debug(errors.New(fmt.Sprintf(uknownFormat, code)))
+
+  return errUknown
+}
+
+func (e Errors) Debug(v ...interface{}) {
+  e.debug(v)
 }
