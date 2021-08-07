@@ -5,13 +5,13 @@ import (
   "os"
 )
 
-var e *Errors
+var e Errors
 var err error
 
 func TestMain(m *testing.M){
   const path = "errors_test.json"
 
-  e, _ = New(path)
+  e = New(path)
 
   os.Exit(m.Run())
 }
