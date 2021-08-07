@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 )
 
 type errorDictionary map[string]error
@@ -17,28 +16,32 @@ type Errors struct {
 const uknownFormat = "Error code %s is uknown"
 var errUknown = errors.New("Something wrong!")
 
-func New(path string) (*Errors, error) {
+func New(path string) (Errors) {
   var err error
+
+  var errs Errors
+  errs = Errors{
+    errDict: make(errorDictionary, 0),
+    debug: nil,
+  }
+  
   var raw []byte
   raw, err = ioutil.ReadFile(path)
   if err != nil {
-    return nil, err
+    return errs
   }
 
   var dict map[string]string
   err = json.Unmarshal(raw, &dict)
-
-  var errDict errorDictionary
-  errDict = make(errorDictionary)
-
-  for code, msg := range dict {
-    errDict[code] = errors.New(msg)
+  if err != nil {
+    return errs
   }
 
-  return &Errors{
-    errDict: errDict,
-    debug: log.Println,
-  }, nil
+  for code, msg := range dict {
+    errs.errDict[code] = errors.New(msg)
+  }
+
+  return errs
 }
 
 func (e *Errors) SetDebug(fn func(v ...interface{})) {
@@ -52,11 +55,13 @@ func (e Errors) Code(code string) error{
     return err
   }
 
-  e.debug(errors.New(fmt.Sprintf(uknownFormat, code)))
+  e.Debug(fmt.Sprintf(uknownFormat, code))
 
   return errUknown
 }
 
 func (e Errors) Debug(v ...interface{}) {
-  e.debug(v)
+  if e.debug != nil {
+    e.debug(v)
+  }
 }

@@ -7,7 +7,27 @@ import (
 	"github.com/cerminan/libs/errors"
 )
 
-var Errors *errors.Errors
+const errorpath = "error.json"
+var (
+  ErrNotPointer error
+  ErrNotStruct error
+  ErrIsNil error
+  ErrFieldNotSupported error
+  ErrFieldNotNumber error
+  ErrFieldNotBoolean error
+)
+
+func init() {
+  var errs errors.Errors
+  errs = errors.New(errorpath)
+
+  ErrNotPointer = errs.Code("ConfigNotPointer")
+  ErrNotStruct = errs.Code("ConfigNotStruct")
+  ErrIsNil = errs.Code("ConfigIsNil")
+  ErrFieldNotSupported = errs.Code("ConfigFieldNotSupported")
+  ErrFieldNotNumber = errs.Code("ConfigFieldNotNumber")
+  ErrFieldNotBoolean = errs.Code("ConfigFieldNotBoolean")
+}
 
 type configKind struct{
   Kind reflect.Kind
@@ -25,31 +45,23 @@ var configkinds = []configKind{
 }
 
 func validateConfig(config interface{}) error {
-  var err error
-
-  const errDict string = "errors.json"
-  Errors, err = errors.New(errDict)
-  if err != nil {
-    return err
-  }
-
   var config_type reflect.Type
   config_type = reflect.TypeOf(config)
 
   if config_type.Kind() != reflect.Ptr {
-    return Errors.Code("PTR")
+    return ErrNotPointer
   }
   config_type = config_type.Elem()
   
   if config_type.Kind() != reflect.Struct {
-    return Errors.Code("STRUCT")
+    return ErrNotStruct
   }
 
   var config_value reflect.Value
   config_value = reflect.ValueOf(config)
 
   if config_value.IsZero() {
-    return Errors.Code("NIL")
+    return ErrIsNil
   }
 
   return nil
@@ -141,5 +153,5 @@ func setValue(var_value reflect.Value, value string) error{
     }
   }
 
-  return Errors.Code("UNSUPPORT")
+  return ErrFieldNotSupported
 }

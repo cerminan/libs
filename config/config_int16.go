@@ -18,7 +18,7 @@ var configInt16 = configKind{
 
     value_int64, err = strconv.ParseInt(value, 10, 16)
     if err != nil {
-      return Errors.Code("NOTNUMBER")
+      return ErrFieldNotNumber
     }
 
     reflectValue.SetInt(value_int64)

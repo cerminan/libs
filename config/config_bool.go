@@ -18,7 +18,7 @@ var configBool = configKind {
 
     value_bool, err = strconv.ParseBool(value)
     if err != nil {
-      return Errors.Code("NOTBOOL")
+      return ErrFieldNotBoolean
     }
 
     reflectValue.SetBool(value_bool)
