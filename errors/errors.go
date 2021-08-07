@@ -17,16 +17,19 @@ type Errors struct {
 const uknownFormat = "Error code %s is uknown"
 var errUknown = errors.New("Something wrong!")
 
-func New(path string) (*Errors, error) {
+func New(path string) (Errors) {
   var err error
   var raw []byte
   raw, err = ioutil.ReadFile(path)
   if err != nil {
-    return nil, err
+    return Errors{}
   }
 
   var dict map[string]string
   err = json.Unmarshal(raw, &dict)
+  if err != nil {
+    return Errors{}
+  }
 
   var errDict errorDictionary
   errDict = make(errorDictionary)
@@ -35,10 +38,10 @@ func New(path string) (*Errors, error) {
     errDict[code] = errors.New(msg)
   }
 
-  return &Errors{
+  return Errors{
     errDict: errDict,
     debug: log.Println,
-  }, nil
+  } 
 }
 
 func (e *Errors) SetDebug(fn func(v ...interface{})) {
