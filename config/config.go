@@ -4,7 +4,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/kuli-app/libs/errors"
+	"github.com/cerminan/libs/errors"
 )
 
 var Errors *errors.Errors

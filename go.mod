@@ -1,4 +1,4 @@
-module github.com/kuli-app/libs
+module github.com/cerminan/libs
 
 go 1.16
 
