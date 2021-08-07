@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 )
 
 type errorDictionary map[string]error
@@ -40,7 +39,7 @@ func New(path string) (Errors) {
 
   return Errors{
     errDict: errDict,
-    debug: log.Println,
+    debug: nil,
   } 
 }
 
@@ -61,5 +60,7 @@ func (e Errors) Code(code string) error{
 }
 
 func (e Errors) Debug(v ...interface{}) {
-  e.debug(v)
+  if e.debug != nil {
+    e.debug(v)
+  }
 }
