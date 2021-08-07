@@ -54,7 +54,7 @@ func (e Errors) Code(code string) error{
     return err
   }
 
-  e.debug(errors.New(fmt.Sprintf(uknownFormat, code)))
+  e.Debug(fmt.Sprintf(uknownFormat, code))
 
   return errUknown
 }
