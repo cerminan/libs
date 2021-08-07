@@ -18,29 +18,30 @@ var errUknown = errors.New("Something wrong!")
 
 func New(path string) (Errors) {
   var err error
+
+  var errs Errors
+  errs = Errors{
+    errDict: make(errorDictionary, 0),
+    debug: nil,
+  }
+  
   var raw []byte
   raw, err = ioutil.ReadFile(path)
   if err != nil {
-    return Errors{}
+    return errs
   }
 
   var dict map[string]string
   err = json.Unmarshal(raw, &dict)
   if err != nil {
-    return Errors{}
+    return errs
   }
-
-  var errDict errorDictionary
-  errDict = make(errorDictionary)
 
   for code, msg := range dict {
-    errDict[code] = errors.New(msg)
+    errs.errDict[code] = errors.New(msg)
   }
 
-  return Errors{
-    errDict: errDict,
-    debug: nil,
-  } 
+  return errs
 }
 
 func (e *Errors) SetDebug(fn func(v ...interface{})) {
