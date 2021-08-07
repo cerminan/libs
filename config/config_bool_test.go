@@ -71,7 +71,7 @@ func TestInvalidFieldBool(t *testing.T){
   if err == nil {
     t.Fatalf(invalid_default_err)
   }
-  if err.Error() != Errors.Code("NOTBOOL").Error() {
+  if err != ErrFieldNotBoolean {
     t.Fatalf(invalid_default_err)
   }
 
@@ -88,7 +88,7 @@ func TestInvalidFieldBool(t *testing.T){
   if err == nil {
     t.Fatalf(invalid_envar_err)
   }
-  if err.Error() != Errors.Code("NOTBOOL").Error() {
+  if err != ErrFieldNotBoolean {
     t.Fatal(invalid_envar_err)
   }
 

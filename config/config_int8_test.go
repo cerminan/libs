@@ -71,7 +71,7 @@ func TestInvalidFieldInt8(t *testing.T){
   if err == nil {
     t.Fatalf(invalid_default_err)
   }
-  if err.Error() != Errors.Code("NOTNUMBER").Error() {
+  if err != ErrFieldNotNumber {
     t.Fatalf(invalid_default_err)
   }
 
@@ -88,7 +88,7 @@ func TestInvalidFieldInt8(t *testing.T){
   if err == nil {
     t.Fatalf(invalid_envar_err)
   }
-  if err.Error() != Errors.Code("NOTNUMBER").Error() {
+  if err != ErrFieldNotNumber {
     t.Fatal(invalid_envar_err)
   }
 

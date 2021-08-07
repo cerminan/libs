@@ -1,8 +1,8 @@
 {
-  "PTR" : "'config' is not a pointer.",
-  "STRUCT" : "'config' is not a structure.",
-  "UNSUPPORT" : "a field of 'config' has unsupported kind.",
-  "NOTNUMBER" : "value is not a number.",
-  "NOTBOOL" : "value is not a valid boolean representation.",
-  "NIL" : "'config' is nil."
+  "ConfigNotPointer" : "'config' is not a pointer.",
+  "ConfigNotStruct" : "'config' is not a structure.",
+  "ConfigIsNil" : "'config' is nil.",
+  "ConfigFieldNotSupported" : "a field of 'config' has unsupported kind.",
+  "ConfigFieldNotNumber" : "value is not a number.",
+  "ConfigFieldNotBoolean" : "value is not a valid boolean representation."
 }

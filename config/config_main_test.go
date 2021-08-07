@@ -9,7 +9,7 @@ func TestNil(t *testing.T){
   type config_format struct{}
   var config_ptr *config_format
 
-  if err := validateConfig(config_ptr); err.Error() != Errors.Code("NIL").Error() {
+  if err := validateConfig(config_ptr); err != ErrIsNil {
     t.Fatal("Unable to detect nill config variable")
   }
 }
@@ -21,7 +21,7 @@ func TestPointer(t *testing.T){
     t.Fatal("Unable to parse pointer config variable")
   }
 
-  if err := validateConfig(config_format{}); err.Error() != Errors.Code("PTR").Error() {
+  if err := validateConfig(config_format{}); err != ErrNotPointer {
     t.Fatal("Unable to detect non pointer config variable")
   }
 }
@@ -36,7 +36,7 @@ func TestStruct(t *testing.T){
     t.Fatal("Unable to parse pointer struct type")
   }
   
-  if err := validateConfig(&Int); err.Error() != Errors.Code("STRUCT").Error() {
+  if err := validateConfig(&Int); err != ErrNotStruct {
     t.Fatal("Unable to detect non pointer struct type")
   }
 }
